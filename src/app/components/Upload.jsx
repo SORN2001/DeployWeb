@@ -62,8 +62,8 @@ function UploadImage() {
         <h1 className="text-3xl font-bold text-gray-800 mb-4">
           อัปโหลดภาพเพื่อจำแนก
         </h1>
-        <p className="text-gray-600 mb-6">
-          กรุณาเลือกรูปภาพ Sentinel-2 เพื่อตรวจสอบว่าคือ "อ้อย" หรือ "มันสำปะหลัง"
+        <p className="text-gray-600 mb-4">
+          กรุณาเลือกรูปภาพถ่ายดาวเทียม Sentinel-2 เพื่อใช้สำหรับการจำแนกประเภทการใช้ประโยชน์ที่ดิน
         </p>
         <div className="mb-4">
           <input
@@ -76,7 +76,7 @@ function UploadImage() {
 
         {preview && (
           <div className="mb-4">
-            <p className="text-gray-600 mb-2">ภาพที่คุณเลือก:</p>
+            <p className="text-gray-600 mb-2">ภาพที่คุณเลือก</p>
             <img
               src={preview}
               alt="Preview"
@@ -89,10 +89,10 @@ function UploadImage() {
           onClick={handleUpload}
           className={`w-full ${
             isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-          } text-white font-semibold py-2 px-4 rounded-lg shadow transition focus:outline-none focus:ring-2 focus:ring-blue-400 mb-6`}
+          } text-white font-semibold py-2 px-4 rounded-lg shadow transition focus:outline-none focus:ring-2 focus:ring-blue-400 mb-1`}
           disabled={isLoading}
         >
-          {isLoading ? "กำลังประมวลผล..." : "อัปโหลดและจำแนก"}
+          {isLoading ? "กำลังประมวลผล..." : "กดเพื่อจำแนก"}
         </button>
       </div>
 
@@ -102,20 +102,21 @@ function UploadImage() {
             {result ? (
               <>
                 <p className="text-gray-800 text-lg font-semibold mb-4">
-                  ผลการจำแนก: <span className="text-green-600">{result}</span>
+                  ผลการจำแนกประเภท = <span className="text-green-600">{result}</span>
                 </p>
                 <p className="text-sm text-gray-700 mb-4">
-                  <strong>ความน่าจะเป็น:</strong>
-                  <span className="block mt-1">
-                    <strong>อ้อย:</strong> {percentages["SugarCane"] || "-"}
-                  </span>
-                  <span>
-                    <strong>มันสำปะหลัง:</strong> {percentages["Cassava"] || "-"}
-                  </span>
+                  <strong>ความน่าจะเป็น</strong>
+                  <div className="mt-3">
+                    <span className="flex justify-between pl-8 pr-8 mt-1"><strong>F - ป่าไม้ :</strong> {percentages["F"] || "-"}</span>
+                    <span className="flex justify-between pl-8 pr-8 mt-1"><strong>P - สวนยาง :</strong> {percentages["P"] || "-"}</span>
+                    <span className="flex justify-between pl-8 pr-8 mt-1"><strong>R - นาข้าว :</strong> {percentages["R"] || "-"}</span>
+                    <span className="flex justify-between pl-8 pr-8 mt-1"><strong>U - ที่อยู่อาศัย :</strong> {percentages["U"] || "-"}</span>
+                    <span className="flex justify-between pl-8 pr-8 mt-1"><strong>W - แหล่งน้ำ :</strong> {percentages["W"] || "-"}</span>
+                  </div>
                 </p>
                 {preview && (
                   <div className="mb-4">
-                    <p className="text-gray-600 mb-2">ภาพที่คุณอัปโหลด:</p>
+                    <p className="text-gray-600 mb-2">ภาพที่คุณอัปโหลด</p>
                     <img
                       src={preview}
                       alt="Uploaded Preview"
@@ -126,7 +127,7 @@ function UploadImage() {
               </>
             ) : (
               <p className="text-gray-800 text-lg font-semibold mb-4">
-                กรุณาเลือกรูปภาพก่อนอัปโหลด!
+                กรุณาเลือกภาพถ่ายดาวเทียมก่อนทำการกดจำแนก !!!
               </p>
             )}
             <button
