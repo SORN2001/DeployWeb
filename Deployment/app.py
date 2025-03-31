@@ -41,13 +41,14 @@ def predict():
 
         if predictions.shape[1] == len(class_names):  # ตรวจสอบว่าผลลัพธ์ตรงกับจำนวนคลาส
             percentages = (predictions[0] * 100).round(2)  # แปลงเป็นเปอร์เซ็นต์
+            # percentages = (predictions[0] * 100).astype(int)  # แปลงเป็นเปอร์เซ็นต์และตัดจุดทศนิยม
             predicted_class = np.argmax(predictions, axis=1)[0]  # หา index ของค่าที่สูงสุด
             result = class_names[predicted_class]
 
             return jsonify({
                 'result': result,
                 'percentages': {
-                    class_names[i]: f"{percentages[i]}%" for i in range(len(class_names))
+                    class_names[i]: f"{percentages[i]:.2f}%" for i in range(len(class_names))
                 }
             })
         else:

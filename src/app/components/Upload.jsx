@@ -3,6 +3,7 @@ import React, { useState } from "react";
 function UploadImage() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [fileName, setFileName] = useState("ภาพถ่ายดาวเทียม");
   const [result, setResult] = useState("");
   const [percentages, setPercentages] = useState({});
   const [showPopup, setShowPopup] = useState(false);
@@ -10,13 +11,16 @@ function UploadImage() {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    setSelectedFile(file);
-
-    if (file) {
+    if (file && file.type.startsWith("image/")) {
+      setSelectedFile(file);
+      setFileName(file.name);
       const previewUrl = URL.createObjectURL(file);
       setPreview(previewUrl);
     } else {
+      alert("กรุณาอัปโหลดเฉพาะไฟล์รูปภาพเท่านั้น");
+      setSelectedFile(null);
       setPreview(null);
+      setFileName("ภาพถ่ายดาวเทียม");
     }
   };
 
@@ -57,54 +61,64 @@ function UploadImage() {
   };
 
   return (
-    <div>
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-lg w-full text-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          อัปโหลดภาพเพื่อจำแนก
-        </h1>
-        <p className="text-gray-600 mb-4">
-          กรุณาเลือกรูปภาพถ่ายดาวเทียม Sentinel-2 เพื่อใช้สำหรับการจำแนกประเภทการใช้ประโยชน์ที่ดิน
+    <div className="flex items-center justify-center">
+      <div className="shadow-lg rounded-xl p-8 max-w-xl w-full text-center text-white bg-gray-800">
+        <h1 className="text-3xl font-bold mb-4">อัปโหลดภาพถ่ายดาวเทียม</h1>
+        <p className="mb-4">
+          เลือกภาพถ่ายดาวเทียมเพื่อใช้สำหรับการจำแนกประเภทการใช้ประโยชน์ที่ดิน
         </p>
-        <div className="mb-4">
+        <div className="bg-gray-700 p-4 rounded-lg mb-4">
+          <label
+            htmlFor="fileInput"
+            className="flex items-center justify-between bg-gray-600 px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-500"
+          >
+            <span className="flex items-center gap-3">
+              <img
+                src="/images/files.png"
+                alt="icon"
+                className="w-6 h-6 opacity-75"
+              />
+              {fileName}
+            </span>
+          </label>
           <input
             type="file"
             id="fileInput"
+            accept="image/*"
             onChange={handleFileChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white cursor-pointer focus:outline-none"
+            className="hidden"
           />
         </div>
 
         {preview && (
-          <div className="mb-4">
-            <p className="text-gray-600 mb-2">ภาพที่คุณเลือก</p>
+          <div className="mb-4 flex justify-center">
             <img
               src={preview}
               alt="Preview"
-              className="w-64 h-64 object-contain border border-gray-300 rounded-lg"
+              className="w-64 h-64 object-contain border border-gray-500 rounded-lg"
             />
           </div>
         )}
 
         <button
           onClick={handleUpload}
-          className={`w-full ${
-            isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-          } text-white font-semibold py-2 px-4 rounded-lg shadow transition focus:outline-none focus:ring-2 focus:ring-blue-400 mb-1`}
+          className={`w-full py-2 rounded-lg font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-blue-400 mb-1
+          ${isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
           disabled={isLoading}
         >
-          {isLoading ? "กำลังประมวลผล..." : "กดเพื่อจำแนก"}
+          {isLoading ? "กำลังประมวลผล..." : "จำแนก"}
         </button>
       </div>
 
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-xs text-center">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-xs text-center">
             {result ? (
               <>
-                <p className="text-gray-800 text-lg font-semibold mb-4">
-                  ผลการจำแนกประเภท = <span className="text-green-600">{result}</span>
+                <p className="text-white text-lg font-semibold mb-4">
+                  ผลการจำแนกประเภท = <span className="text-green-400">{result}</span>
                 </p>
-                <p className="text-sm text-gray-700 mb-4">
+                <p className="text-sm text-gray-300 mb-4">
                   <strong>ความน่าจะเป็น</strong>
                   <div className="mt-3">
                     <span className="flex justify-between pl-8 pr-8 mt-1"><strong>F - ป่าไม้ :</strong> {percentages["F"] || "-"}</span>
@@ -116,17 +130,17 @@ function UploadImage() {
                 </p>
                 {preview && (
                   <div className="mb-4">
-                    <p className="text-gray-600 mb-2">ภาพที่คุณอัปโหลด</p>
+                    <p className="text-gray-300 mb-2">ภาพที่คุณอัปโหลด</p>
                     <img
                       src={preview}
                       alt="Uploaded Preview"
-                      className="w-64 h-64 object-contain border border-gray-300 rounded-lg"
+                      className="w-64 h-64 object-contain border border-gray-500 rounded-lg"
                     />
                   </div>
                 )}
               </>
             ) : (
-              <p className="text-gray-800 text-lg font-semibold mb-4">
+              <p className="text-white text-lg font-semibold mb-4">
                 กรุณาเลือกภาพถ่ายดาวเทียมก่อนทำการกดจำแนก !!!
               </p>
             )}
